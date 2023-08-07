@@ -1,0 +1,10 @@
+# Jupyter notebook
+.ipynb_checkpoints
+Notebook.ipynb
+
+# Data
+raw_apartments_data.csv
+apartments_data.csv
+
+# The rest
+**Отчет.docx
