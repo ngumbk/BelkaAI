@@ -1,7 +1,6 @@
 # Jupyter notebook
 .ipynb_checkpoints
-Data_clean.ipynb
-Notebook.ipynb
+Notebooks
 
 # Data
 raw_apartments_data.csv
