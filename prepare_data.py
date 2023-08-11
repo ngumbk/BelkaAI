@@ -242,6 +242,12 @@ def prepare_data():
     apartments_data = apartments_data.drop(
         ['address', 'comment', 'district', 'district_cat'], axis=1)
     
+    # Формируем 2 новых признака посредством разделения признака 'floor'
+    apartments_data['apaertment_floor'] = apartments_data['floor'].apply(lambda x: x.split('/')[0])
+    apartments_data['house_floors'] = apartments_data['floor'].apply(lambda x: x.split('/')[1])
+    apartments_data = apartments_data.drop('floor', axis=1)
+    apartments_data.head()
+
     print(apartments_data.head(3))
 
 
