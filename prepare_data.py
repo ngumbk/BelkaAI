@@ -25,6 +25,17 @@ def set_district_category(district):
         return 'Levoberezhniy'
 
 
+def set_agency_category(agency):
+    if agency == 'РиоЛюкс':
+        return 'RioLuks'
+    elif agency == 'Частное лицо':
+        return 'Individual'
+    elif agency == 'Агентство Недвижимости Ключи':
+        return 'AN_Klyuchi'
+    else:
+        return 'another'
+    
+
 def prepare_data():
     apartments_data = pd.read_csv('raw_apartments_data.csv', encoding='cp1251')
 
@@ -243,12 +254,29 @@ def prepare_data():
         ['address', 'comment', 'district', 'district_cat'], axis=1)
     
     # Формируем 2 новых признака посредством разделения признака 'floor'
-    apartments_data['apaertment_floor'] = apartments_data['floor'].apply(lambda x: x.split('/')[0])
+    apartments_data['apartment_floor'] = apartments_data['floor'].apply(lambda x: x.split('/')[0])
     apartments_data['house_floors'] = apartments_data['floor'].apply(lambda x: x.split('/')[1])
     apartments_data = apartments_data.drop('floor', axis=1)
-    apartments_data.head()
 
-    print(apartments_data.head(3))
+    agencies_dic = {'Рио-Люкс': 'РиоЛюкс',
+                    'Оператор недвижимости Ключи': 'Агентство Недвижимости Ключи'}
+    # Приведем некоторые названия агенств к соответствию
+    apartments_data['agency'] = apartments_data['agency'].replace(agencies_dic)
+    # Восстановим пропуски
+    apartments_data = apartments_data.fillna(value={'agency': 'Частное лицо'})
+
+    # Кодируем агентства с помощью OHE 
+    apartments_data['agency_cat'] = apartments_data['agency'].apply(
+        set_agency_category)
+    agencies_encoded = pd.get_dummies(apartments_data['agency_cat'],
+                                      prefix='agency')
+    apartments_data = pd.concat([apartments_data, agencies_encoded], axis=1)
+
+    # Удаляем ненужные поля
+    apartments_data = apartments_data.drop(['agency', 'agency_cat'], axis=1)
+
+    apartments_data.to_csv('apartments_data.csv', encoding='cp1251',
+                           index=False)
 
 
 if __name__ == '__main__':
